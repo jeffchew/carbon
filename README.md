@@ -41,6 +41,7 @@ We also have community-contributed components for the following technologies:
 - [Angular](https://github.com/IBM/carbon-components-angular)
 - [Vue](https://github.com/carbon-design-system/carbon-components-vue)
 - [Svelte](https://github.com/IBM/carbon-components-svelte)
+- [Web Components](https://github.com/carbon-design-system/carbon-web-components)
 
 If you're trying to find something specific, here's a full list of packages that
 we support!

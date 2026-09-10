@@ -9,6 +9,12 @@ dist
 umd
 css
 docs/generated
+temp
+storybook-static
+storybook-static-v12
+
+# Angular
+/packages/angular/.angular/
 
 # Netlify deploy folder
 /demo/*

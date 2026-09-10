@@ -505,3 +505,41 @@ jobs:
           echo "- Storybook deploy preview: ${{ env.storybookUrl }}" >> $GITHUB_STEP_SUMMARY
           echo "- Commit: ${{ github.event.pull_request.head.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- Chromatic build URL: ${{ env.buildUrl }}" >> $GITHUB_STEP_SUMMARY
+
+  angular:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Use Node.js version from .nvmrc
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.nvmrc'
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: github.event_name != 'merge_group'
+        id: cache
+        with:
+          path: |
+            node_modules
+            */**/node_modules
+          key:
+            ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock',
+            'packages/**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        env:
+          YARN_ENABLE_HARDENED_MODE: 0
+        run: yarn install --immutable
+      - name: Build @carbon/angular dependencies
+        run: >
+          yarn lerna run build
+          --scope='@carbon/web-components'
+          --scope='@carbon/styles'
+          --include-dependencies
+      - name: Build @carbon/angular
+        run: yarn workspace @carbon/angular build
+      - name: Run @carbon/angular tests
+        run: yarn workspace @carbon/angular test --ci
+      - name: Build @carbon/angular Storybook
+        run: yarn workspace @carbon/angular storybook:build
+        working-directory: packages/angular
